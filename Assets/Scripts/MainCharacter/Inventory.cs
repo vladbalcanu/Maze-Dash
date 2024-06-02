@@ -9,6 +9,7 @@ public class Inventory : MonoBehaviour
     public int numberOfMedkits;
     public int numberOfKeys;
     public int numberOfFirecrackers;
+    public int numberOfMinerals;
     public int itemPicker;
     public HealthBar healthBar;
 
@@ -18,6 +19,7 @@ public class Inventory : MonoBehaviour
         numberOfKeys = 0;
         numberOfFirecrackers = 0;
         itemPicker = 0;
+        numberOfMinerals = 0;
         healthBar = GameObject.Find("HealthBar").GetComponent<HealthBar>();
     }
 
@@ -60,6 +62,11 @@ public class Inventory : MonoBehaviour
     public void pickFirecracker()
     {
         numberOfFirecrackers++;
+    }
+
+    public void pickMinerals()
+    {
+        numberOfMinerals++;
     }
 
     public bool useKey()

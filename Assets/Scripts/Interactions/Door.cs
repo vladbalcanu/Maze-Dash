@@ -33,7 +33,7 @@ public class Door : MonoBehaviour, IInteractable
     private float SlideAmount = 0.1f;
 
     private Vector3 StartPosition;
-    public AudioSource? audioSource;
+    public AudioSource audioSource;
 
     private void Awake()
     {
