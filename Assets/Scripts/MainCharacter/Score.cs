@@ -10,6 +10,7 @@ public class Score : MonoBehaviour
 
     [SerializeField] private float mineralMultiplier;
     [SerializeField] private float timerMultiplier;
+    [SerializeField] private float sneakyMultiplier;
     private Inventory inventory;
     private float scoreValue;
     private Timer timer;
@@ -22,7 +23,7 @@ public class Score : MonoBehaviour
 
     public void CalculateScore()
     {
-        scoreValue += mineralMultiplier * inventory.numberOfMinerals - timerMultiplier * timer.elapsedTime;
+        scoreValue += mineralMultiplier * inventory.numberOfMinerals - timerMultiplier * timer.elapsedTime - sneakyMultiplier * inventory.healthBar.numberOfHits;
         scoreText.text = ((int)scoreValue).ToString();
     }
 }

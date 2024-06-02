@@ -12,7 +12,7 @@ public class MineralSpawner : MonoBehaviour
     public float collideRadius = 1.0f;
     void Start()
     {
-        numberOfMinerals = 20;
+        numberOfMinerals = 40;
         curentNumberOfMinerals = 0;
         StartCoroutine(SpawnMinerals());
   

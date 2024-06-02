@@ -143,7 +143,7 @@ public class Door : MonoBehaviour, IInteractable
 
     private IEnumerator DoSlidingClose()
     {
-        Vector3 endPosition = transform.position + Vector3.down * SlideAmount;
+        Vector3 endPosition = transform.position + Vector3.down * (SlideAmount-0.5f);
         Vector3 startPosition = transform.position;
         float time = 0;
         isOpen = false;

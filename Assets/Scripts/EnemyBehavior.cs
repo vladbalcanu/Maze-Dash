@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
@@ -12,13 +13,13 @@ public class EnemyBehavior : MonoBehaviour
     public EnemyAnimatorManager animatorManager;
     public Transform player;
 
-    public LayerMask isGround, isPlayer;
+    public LayerMask isGround;
     public HealthBar healthBar;
 
     public int health;
 
     // Patrula inamic
-    public Vector3 walkPoint, firecrackerPoint;
+    public Vector3 walkPoint, firecrackerPoint, lastSpottedPlayerLocation;
     bool walkPointSet;
     public float walkPointRange;
     public float delay;
@@ -30,7 +31,7 @@ public class EnemyBehavior : MonoBehaviour
     public GameObject projectile;
 
     //States
-    public float sightRange = 15, attackRange = 5;
+    public float attackRange = 5;
     public bool playerInAttackRange, playerInFov;
     public bool isPatroling, isChasing, isAttacking, isHearingFirecracker;
 
@@ -43,6 +44,7 @@ public class EnemyBehavior : MonoBehaviour
     public PlayerLocomotion playerLocomotion;
     public bool canSeePlayer;
     public LayerMask targetMask, obstructionMask, firecrackerMask;
+    public bool playerWasSpotted;
 
     private void Awake()
     {
@@ -52,7 +54,6 @@ public class EnemyBehavior : MonoBehaviour
         playerLocomotion = playerRef.GetComponent<PlayerLocomotion>();
         animatorManager = GetComponent<EnemyAnimatorManager>();
         agent = GetComponent<NavMeshAgent>();
-        delay = 3.0f;
         timeBetweenAttacks = 5.0f;
         isHearingFirecracker = false;
     }
@@ -98,7 +99,15 @@ public class EnemyBehavior : MonoBehaviour
 
             if (!canSeePlayer)
             {
-                Patroling();
+                if (playerWasSpotted)
+                {
+                    SearchLastKnownPlayerLocation();
+                }
+                else
+                {
+                    Patroling();
+                }
+                
             }
             if (canSeePlayer && !playerInAttackRange)
             {
@@ -114,7 +123,7 @@ public class EnemyBehavior : MonoBehaviour
 
     private void IsHearingFirecracker()
     {
-        Collider[] firecracker = Physics.OverlapSphere(transform.position, 360.0f, firecrackerMask);
+        Collider[] firecracker = Physics.OverlapSphere(transform.position, 100.0f, firecrackerMask);
 
         if (firecracker.Length > 0)
         {
@@ -140,12 +149,33 @@ public class EnemyBehavior : MonoBehaviour
 
     }
 
+    private void SearchLastKnownPlayerLocation()
+    {
+        isPatroling = false;
+        isChasing = true;
+        isAttacking = false;
+        agent.speed = 3.0f;
+        agent.SetDestination(lastSpottedPlayerLocation);
+        Invoke(nameof(ResetPlayerWasSpotted), 4.0f);
+    }
+
     private void Patroling()
     {
         isPatroling = true;
         isChasing = false;
         isAttacking = false;
         agent.speed = 1.5f;
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 0.5f, obstructionMask))
+        {
+            Debug.Log("HIT: " + hit.collider.name);
+            Vector3 oppositeDirection = - transform.forward;
+            walkPoint = transform.position + oppositeDirection.normalized * 0.5f;
+            walkPoint.y = transform.position.y;
+            walkPointSet = true;
+        }
+
 
         if (!walkPointSet)
         {
@@ -154,22 +184,31 @@ public class EnemyBehavior : MonoBehaviour
         else
         {
             agent.SetDestination(walkPoint);
+
         }
+
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
-        if (distanceToWalkPoint.magnitude < 1f)
+        if (Mathf.Abs(distanceToWalkPoint.magnitude) < 0.1f)
         {
             walkPointSet = false;
         }
     }
 
+    private void CheckIsStuck()
+    {
+
+    }
+
     private void SearchWalkPoint()
     {
-        float randomZ = UnityEngine.Random.Range(-walkPointRange, walkPointRange);
-        float randomX = UnityEngine.Random.Range(-walkPointRange, walkPointRange);
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        float randomZ = UnityEngine.Random.Range(-1, 1);
+        float randomX = UnityEngine.Random.Range(-1, 1);
+        walkPoint = new Vector3(transform.position.x + (randomX * walkPointRange), transform.position.y, transform.position.z + (randomZ * walkPointRange));
+        
+        Vector3 walkPointDirection = (walkPoint - transform.position).normalized;
 
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, isGround) && !Physics.Raycast(walkPoint, transform.up, 2f, obstructionMask))
+        if (Physics.Raycast(walkPoint, -transform.up, 2f, isGround) && !Physics.Raycast(transform.position, walkPointDirection, 4.0f, obstructionMask))
         {
             walkPointSet = true;
         }
@@ -178,11 +217,18 @@ public class EnemyBehavior : MonoBehaviour
     private void ChasePlayer()
     {
         agent.SetDestination(player.position);
-        transform.LookAt(player.transform);
+        transform.LookAt(player);
+        lastSpottedPlayerLocation = player.position;
         agent.speed = 3.0f;
         isPatroling = false;
         isChasing = true;
         isAttacking = false;
+        playerWasSpotted = true;
+    }
+
+    private void ResetPlayerWasSpotted()
+    {
+        playerWasSpotted = false;
     }
 
     private void AttackPlayer()
@@ -219,7 +265,5 @@ public class EnemyBehavior : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, sightRange);
     }
 }

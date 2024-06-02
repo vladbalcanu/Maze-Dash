@@ -10,7 +10,6 @@ public class Inventory : MonoBehaviour
     public int numberOfKeys;
     public int numberOfFirecrackers;
     public int numberOfMinerals;
-    public int itemPicker;
     public HealthBar healthBar;
 
     private void Awake()
@@ -18,34 +17,15 @@ public class Inventory : MonoBehaviour
         numberOfMedkits = 0;
         numberOfKeys = 0;
         numberOfFirecrackers = 0;
-        itemPicker = 0;
         numberOfMinerals = 0;
         healthBar = GameObject.Find("HealthBar").GetComponent<HealthBar>();
     }
 
     private void Update()
     {
-        if (Keyboard.current.digit1Key.wasPressedThisFrame)
-            itemPicker = 0;
-        if (Keyboard.current.digit2Key.wasPressedThisFrame)
-            itemPicker = 1;
-        if (Keyboard.current.digit3Key.wasPressedThisFrame)
-            itemPicker = 2;
-
         if (Keyboard.current.fKey.wasPressedThisFrame)
         {
-            switch (itemPicker)
-            {
-                case 0:
-                    useMedkit();
-                    break;
-                case 1:
-                    //useFirecracker();
-                    break;
-                case 2:
-                    //Debug.Log("Key");
-                    break;
-            }
+            useMedkit();
         }
     }
 
@@ -87,9 +67,10 @@ public class Inventory : MonoBehaviour
         else
         {
             numberOfMedkits--;
-            healthBar.health += 25;
-            if (healthBar.health > 100)
-                healthBar.health = 100;
+            if (numberOfMedkits < 0)
+                numberOfMedkits = 0;
+
+            healthBar.RecoverHealth(25);
             return true;
         }
     }
