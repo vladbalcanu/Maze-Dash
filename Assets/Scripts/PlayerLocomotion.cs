@@ -6,11 +6,12 @@ public class PlayerLocomotion : MonoBehaviour
 {
     // Start is called before the first frame update
     PlayerManager playerManager;
-    AnimatorManager animatorManager;
+    MainCharacterAnimationManager animatorManager;
     InputManager inputManager;
     Vector3 movementDirection;
     Transform cameraObject;
     Rigidbody playerRigidBody;
+    CapsuleCollider capsuleCollider;
 
     [Header("Falling")]
     public float inAirTimer;
@@ -43,11 +44,12 @@ public class PlayerLocomotion : MonoBehaviour
     private void Awake()
     {
         playerManager = GetComponent<PlayerManager>();
-        animatorManager = GetComponent<AnimatorManager>();
+        animatorManager = GetComponent<MainCharacterAnimationManager>();
         inputManager = GetComponent<InputManager>();
         playerRigidBody = GetComponent<Rigidbody>();
         cameraObject = Camera.main.transform;
-        
+        capsuleCollider = GetComponent<CapsuleCollider>();
+
     }
 
     public void HandleAllMovement()
@@ -79,17 +81,21 @@ public class PlayerLocomotion : MonoBehaviour
         if (isCrouching)
         {
             movementDirection = movementDirection * crouchingSpeed;
+            capsuleCollider.height = 1.2f;
         }
         else if (isSprinting)
         {
+            capsuleCollider.height = 1.7f;
             movementDirection = movementDirection * sprintingSpeed;
         }
         else if (isWalking)
         {
+            capsuleCollider.height = 1.7f;
             movementDirection = movementDirection * walkingSpeed;
         }
         else
         {
+            capsuleCollider.height = 1.7f;
             if (inputManager.movementAmount >= 0.5f)
             {
                 movementDirection = movementDirection * runningSpeed;

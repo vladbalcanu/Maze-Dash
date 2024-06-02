@@ -10,7 +10,6 @@ public class EnemyBehavior : MonoBehaviour
 
     public NavMeshAgent agent;
     public EnemyAnimatorManager animatorManager;
-
     public Transform player;
 
     public LayerMask isGround, isPlayer;
@@ -19,7 +18,7 @@ public class EnemyBehavior : MonoBehaviour
     public int health;
 
     // Patrula inamic
-    public Vector3 walkPoint;
+    public Vector3 walkPoint, firecrackerPoint;
     bool walkPointSet;
     public float walkPointRange;
     public float delay;
@@ -32,8 +31,8 @@ public class EnemyBehavior : MonoBehaviour
 
     //States
     public float sightRange = 15, attackRange = 5;
-    public bool playerInSightRange, playerInAttackRange, playerInFov;
-    public bool isPatroling, isChasing, isAttacking;
+    public bool playerInAttackRange, playerInFov;
+    public bool isPatroling, isChasing, isAttacking, isHearingFirecracker;
 
     //FOV
     [Range(5, 15)]
@@ -43,7 +42,7 @@ public class EnemyBehavior : MonoBehaviour
     public GameObject playerRef;
     public PlayerLocomotion playerLocomotion;
     public bool canSeePlayer;
-    public LayerMask targetMask, obstructionMask;
+    public LayerMask targetMask, obstructionMask, firecrackerMask;
 
     private void Awake()
     {
@@ -55,6 +54,7 @@ public class EnemyBehavior : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         delay = 3.0f;
         timeBetweenAttacks = 5.0f;
+        isHearingFirecracker = false;
     }
 
     private void PlayerInFov()
@@ -86,23 +86,58 @@ public class EnemyBehavior : MonoBehaviour
     }
     private void Update()
     {
-        PlayerInFov();
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, targetMask);
+        IsHearingFirecracker();
+        if (isHearingFirecracker)
+        {
+            goToFirecracker();
+        }
+        else
+        {
+            PlayerInFov();
+            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, targetMask);
 
-        if (!canSeePlayer)
-        {
-            Patroling();
+            if (!canSeePlayer)
+            {
+                Patroling();
+            }
+            if (canSeePlayer && !playerInAttackRange)
+            {
+                ChasePlayer();
+            }
+            if (canSeePlayer && playerInAttackRange)
+            {
+                AttackPlayer();
+            }
         }
-        if (canSeePlayer && !playerInAttackRange)
-        {
-            ChasePlayer();
-        }
-        if (canSeePlayer && playerInAttackRange)
-        {
-            AttackPlayer();
-        }
-
         animatorManager.UpdateAnimatorValues(isPatroling, isChasing, isAttacking);
+    }
+
+    private void IsHearingFirecracker()
+    {
+        Collider[] firecracker = Physics.OverlapSphere(transform.position, 360.0f, firecrackerMask);
+
+        if (firecracker.Length > 0)
+        {
+
+            isHearingFirecracker = true;
+            firecrackerPoint = firecracker[0].transform.position;
+            Invoke(nameof(ResetFirecracker), 9.0f);
+        }
+    }
+
+    private void ResetFirecracker()
+    {
+        isHearingFirecracker = false;
+    }
+
+    private void goToFirecracker()
+    {
+        isPatroling = false;
+        isChasing = true;
+        isAttacking = false;
+        agent.speed = 3.0f;
+        agent.SetDestination(firecrackerPoint);
+
     }
 
     private void Patroling()
@@ -163,7 +198,7 @@ public class EnemyBehavior : MonoBehaviour
         {
             animatorManager.PlayTargetAnimation("Attack", true);
             playerLocomotion.HandleHit();            
-            healthBar.TakeDamage(10);
+            healthBar.TakeDamage(20);
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }

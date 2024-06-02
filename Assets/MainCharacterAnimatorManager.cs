@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class AnimatorManager : MonoBehaviour
+public class MainCharacterAnimationManager : MonoBehaviour
 {
     public Animator animator;
+    public AudioSource pickupAudioSource;
     int horizontal;
     int vertical;
 
@@ -14,10 +15,15 @@ public class AnimatorManager : MonoBehaviour
         animator = GetComponent<Animator>();
         horizontal = Animator.StringToHash("Horizontal");
         vertical = Animator.StringToHash("Vertical");
+        pickupAudioSource = GetComponent<AudioSource>();
     }
 
     public void PlayTargetAnimation(string targetAnimation, bool isInteracting)
     {
+        if (targetAnimation == "Pick")
+        {
+            pickupAudioSource.Play();
+        }
         animator.SetBool("isInteracting", isInteracting);
         animator.CrossFade(targetAnimation, 0.2f);
     }
