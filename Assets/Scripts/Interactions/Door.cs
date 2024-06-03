@@ -27,12 +27,7 @@ public class Door : MonoBehaviour, IInteractable
 
     private Coroutine animationCoroutine;
 
-    [Header("Sliding Configs")]
-    private Vector3 SlideDirection = Vector3.up;
-    [SerializeField]
-    private float SlideAmount = 0.1f;
-
-    private Vector3 StartPosition;
+    [SerializeField] private float SlideAmount = 0.1f;
     public AudioSource audioSource;
 
     private void Awake()
@@ -66,7 +61,7 @@ public class Door : MonoBehaviour, IInteractable
             }
             else
             {
-                if (inventory.useKey())
+                if (inventory.UseKey())
                 {
                     UseDoor(mainCharacterPosition);
                     hasBeenUnlocked = true;
@@ -94,7 +89,7 @@ public class Door : MonoBehaviour, IInteractable
 
             if (isRotatingDoor)
             {
-                float dot = Vector3.Dot(forward, (userPosition - transform.position).normalized);
+                float dot = Vector3.Dot(forward, (userPosition + transform.position).normalized);
                 mainCharacterAnimationManager.PlayTargetAnimation("Push", true);
                 animationCoroutine = StartCoroutine(DoRotationOpen(dot));
             }
@@ -143,7 +138,7 @@ public class Door : MonoBehaviour, IInteractable
 
     private IEnumerator DoSlidingClose()
     {
-        Vector3 endPosition = transform.position + Vector3.down * (SlideAmount-0.5f);
+        Vector3 endPosition = transform.position + Vector3.down * (SlideAmount-0.1f);
         Vector3 startPosition = transform.position;
         float time = 0;
         isOpen = false;
@@ -162,11 +157,11 @@ public class Door : MonoBehaviour, IInteractable
 
         if (forwardAmount >= forwardDirection)
         {
-            endRotation = Quaternion.Euler(new Vector3(0, StartRotation.y - rotationAmount, 0));
+            endRotation = Quaternion.Euler(new Vector3(0, StartRotation.y + rotationAmount, 0));
         }
         else
         {
-            endRotation = Quaternion.Euler(new Vector3(0, StartRotation.y + rotationAmount, 0));
+            endRotation = Quaternion.Euler(new Vector3(0, StartRotation.y - rotationAmount, 0));
         }
 
         isOpen = true;

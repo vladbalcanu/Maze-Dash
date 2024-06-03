@@ -12,8 +12,8 @@ public class FovEditor : Editor
         Handles.color = Color.white;
         Handles.DrawWireArc(fov.transform.position, Vector3.up, Vector3.forward, 360, fov.fovRadius);
 
-        Vector3 viewAngleLeft = DirectionFromAngle(fov.transform.eulerAngles.y, -fov.fovAngle / 2);
-        Vector3 viewAngleRight = DirectionFromAngle(fov.transform.eulerAngles.y, fov.fovAngle / 2);
+        Vector3 viewAngleLeft = DirectionFromAngle(fov.transform.eulerAngles.y, -fov.fovHorizontalAngle / 2);
+        Vector3 viewAngleRight = DirectionFromAngle(fov.transform.eulerAngles.y, fov.fovHorizontalAngle / 2);
 
         Handles.color = Color.yellow;
         Handles.DrawLine(fov.transform.position, fov.transform.position + viewAngleLeft * fov.fovRadius);

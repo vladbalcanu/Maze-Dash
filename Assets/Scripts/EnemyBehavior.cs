@@ -39,7 +39,9 @@ public class EnemyBehavior : MonoBehaviour
     [Range(5, 15)]
     public float fovRadius;
     [Range(0, 360)]
-    public float fovAngle;
+    public float fovHorizontalAngle;
+    [Range(0, 360)]
+    public float fovVerticalAngle;
     public GameObject playerRef;
     public PlayerLocomotion playerLocomotion;
     public bool canSeePlayer;
@@ -65,8 +67,9 @@ public class EnemyBehavior : MonoBehaviour
         {
             Transform target = rangeChecks[0].transform;
             Vector3 directionToTarget = (target.position - transform.position).normalized;
+            Vector3 horizontalPlaneDirection = Vector3.ProjectOnPlane(directionToTarget, transform.right);
 
-            if (Vector3.Angle(transform.forward, directionToTarget) < fovAngle / 2 )
+            if (Vector3.Angle(transform.forward, directionToTarget) < fovHorizontalAngle / 2 && Vector3.Angle(transform.forward, horizontalPlaneDirection) < fovVerticalAngle / 2 )
             {
                 float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
@@ -123,7 +126,7 @@ public class EnemyBehavior : MonoBehaviour
 
     private void IsHearingFirecracker()
     {
-        Collider[] firecracker = Physics.OverlapSphere(transform.position, 100.0f, firecrackerMask);
+        Collider[] firecracker = Physics.OverlapSphere(transform.position, 40.0f, firecrackerMask);
 
         if (firecracker.Length > 0)
         {
@@ -169,7 +172,6 @@ public class EnemyBehavior : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.forward, out hit, 0.5f, obstructionMask))
         {
-            Debug.Log("HIT: " + hit.collider.name);
             Vector3 oppositeDirection = - transform.forward;
             walkPoint = transform.position + oppositeDirection.normalized * 0.5f;
             walkPoint.y = transform.position.y;
@@ -193,11 +195,6 @@ public class EnemyBehavior : MonoBehaviour
         {
             walkPointSet = false;
         }
-    }
-
-    private void CheckIsStuck()
-    {
-
     }
 
     private void SearchWalkPoint()

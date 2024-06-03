@@ -7,7 +7,6 @@ public class ThrowFirecracker : MonoBehaviour
 {
 
     [Header("References")]
-    public Transform _mainCamera;
     public Transform throwPoint;
     public Inventory inventory;
     public GameObject fireCracker;
@@ -33,7 +32,7 @@ public class ThrowFirecracker : MonoBehaviour
 
     private void Update()
     {
-        if (readyToThrow && Keyboard.current.gKey.wasPressedThisFrame && inventory.useFirecracker())
+        if (readyToThrow && Keyboard.current.gKey.wasPressedThisFrame && inventory.UseFirecracker())
         {
             mainCharacterAnimationManager.PlayTargetAnimation("Throw", true);
             Invoke(nameof(Throw), 0.9f);
@@ -44,7 +43,7 @@ public class ThrowFirecracker : MonoBehaviour
     {
         readyToThrow = false;
 
-        GameObject projectile = Instantiate(fireCracker, throwPoint.position, _mainCamera.rotation);
+        GameObject projectile = Instantiate(fireCracker, throwPoint.position, mainCharacter.transform.rotation);
 
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
 

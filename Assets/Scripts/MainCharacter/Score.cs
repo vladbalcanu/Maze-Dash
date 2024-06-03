@@ -12,18 +12,18 @@ public class Score : MonoBehaviour
     [SerializeField] private float timerMultiplier;
     [SerializeField] private float sneakyMultiplier;
     private Inventory inventory;
-    private float scoreValue;
+    private float startScoreValue;
     private Timer timer;
     void Start()
     {
-        scoreValue = 1000f;
+        startScoreValue = 10000f;
         inventory = GameObject.Find("Main Character").GetComponent<Inventory>();
         timer = GameObject.Find("Timer").GetComponent<Timer>();
     }
 
     public void CalculateScore()
     {
-        scoreValue += mineralMultiplier * inventory.numberOfMinerals - timerMultiplier * timer.elapsedTime - sneakyMultiplier * inventory.healthBar.numberOfHits;
-        scoreText.text = ((int)scoreValue).ToString();
+        startScoreValue += mineralMultiplier * inventory.numberOfMinerals - timerMultiplier * timer.elapsedTime - sneakyMultiplier * inventory.healthBar.numberOfHits;
+        scoreText.text = ((int)startScoreValue).ToString();
     }
 }

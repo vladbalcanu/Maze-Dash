@@ -21,7 +21,7 @@ public class Mineral : MonoBehaviour, IInteractable
     public bool Interact(Interactor interactor)
     {
         mainCharacterAnimationManager.PlayTargetAnimation("Pick", true);
-        inventory.pickMinerals();
+        inventory.PickMineral();
         Invoke(nameof(DestroyMineral), 0.2f);
         return true;
     }

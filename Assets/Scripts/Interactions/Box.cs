@@ -16,21 +16,16 @@ public class Box : MonoBehaviour, IInteractable
 
     public Inventory inventory { get; set; }
 
-    private Vector3 forward;
     private GameObject mainCharacter;
     private MainCharacterAnimationManager mainCharacterAnimationManager;
-    private Vector3 mainCharacterPosition;
-    private Coroutine animationCoroutine;
 
     public bool freeLeft, freeRight, freeForward;
 
     private void Awake()
     {
         inventory = GameObject.Find("Main Character").GetComponent<Inventory>();
-        forward = transform.forward;
         mainCharacter = GameObject.Find("Main Character");
         mainCharacterAnimationManager = mainCharacter.GetComponent<MainCharacterAnimationManager>();
-        mainCharacterPosition = mainCharacter.transform.position;
         _prompt = "Push Box";
         wasPushed = false;
     }
@@ -55,7 +50,6 @@ public class Box : MonoBehaviour, IInteractable
 
             targetPosition = gameObject.transform.position + direction * 1.2f;
             mainCharacterAnimationManager.PlayTargetAnimation("Push", true);
-            animationCoroutine = StartCoroutine(MoveBox(targetPosition));
 
             return true;
         }

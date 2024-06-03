@@ -25,31 +25,31 @@ public class Inventory : MonoBehaviour
     {
         if (Keyboard.current.fKey.wasPressedThisFrame)
         {
-            useMedkit();
+            UseMedkit();
         }
     }
 
-    public void pickMedkit()
+    public void PickMedkit()
     {
         numberOfMedkits++;
     }
 
-    public void pickKey()
+    public void PickKey()
     {
         numberOfKeys++;
     }
 
-    public void pickFirecracker()
+    public void PickFirecracker()
     {
         numberOfFirecrackers++;
     }
 
-    public void pickMinerals()
+    public void PickMineral()
     {
         numberOfMinerals++;
     }
 
-    public bool useKey()
+    public bool UseKey()
     {
         if (numberOfKeys <= 0)
             return false;
@@ -60,7 +60,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public bool useMedkit()
+    public bool UseMedkit()
     {
         if (numberOfMedkits <= 0 || healthBar.health == 100)
             return false;
@@ -75,7 +75,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public bool useFirecracker()
+    public bool UseFirecracker()
     {
         if (numberOfFirecrackers <= 0)
             return false;

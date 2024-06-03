@@ -29,7 +29,7 @@ public class Medkit : MonoBehaviour, IInteractable
         {
             mainCharacterAnimationManager.PlayTargetAnimation("Pick", true);
             animator.CrossFade("opened_closed", 0.2f);
-            inventory.pickMedkit();
+            inventory.PickMedkit();
             hasBeenOpened = true;
             Invoke(nameof(DestroyBox), 2.0f);
             return true;

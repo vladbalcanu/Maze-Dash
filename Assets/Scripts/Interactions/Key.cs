@@ -21,7 +21,7 @@ public class Key : MonoBehaviour, IInteractable
     public bool Interact(Interactor interactor)
     {
         mainCharacterAnimationManager.PlayTargetAnimation("Pick", true);
-        inventory.pickKey();
+        inventory.PickKey();
         Invoke(nameof(DestroyKey), 0.2f);
         return true;
     }

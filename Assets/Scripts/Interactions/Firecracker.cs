@@ -21,7 +21,7 @@ public class Firecracker : MonoBehaviour, IInteractable
     public bool Interact(Interactor interactor)
     {
         mainCharacterAnimationManager.PlayTargetAnimation("Pick", true);
-        inventory.pickFirecracker();
+        inventory.PickFirecracker();
         Invoke(nameof(DestroyFirecracker), 0.2f);
         return true;
     }
