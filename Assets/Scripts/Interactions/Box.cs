@@ -48,9 +48,9 @@ public class Box : MonoBehaviour, IInteractable
                 direction = Vector3.forward;
             }
 
-            targetPosition = gameObject.transform.position + direction * 1.2f;
+            targetPosition = gameObject.transform.position + direction * 2.0f;
             mainCharacterAnimationManager.PlayTargetAnimation("Push", true);
-
+            StartCoroutine(MoveBox(targetPosition));
             return true;
         }
         else
